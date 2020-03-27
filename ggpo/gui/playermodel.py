@@ -182,13 +182,13 @@ class PlayerModel(QtCore.QAbstractTableModel):
     # noinspection PyUnusedLocal
     def reloadPlayers(self, *args):
         self.players = []
-        for p in self.controller.available.keys():
+        for p in list(self.controller.available.keys()):
             ignored = (p in self.controller.ignored) and Qt.Checked or Qt.Unchecked
             self.players.append([PlayerModelState.AVAILABLE,
                                  p, self.getPlayerStat(p, 'ping'),
                                  '', '', ignored,
                                  self.getPlayerStat(p, 'cc'), ''])
-        for p, p2 in self.controller.playing.items():
+        for p, p2 in list(self.controller.playing.items()):
             ignored = (p in self.controller.ignored) and Qt.Checked or Qt.Unchecked
             self.players.append([PlayerModelState.PLAYING,
                                  p, self.getPlayerStat(p, 'ping'),
@@ -197,7 +197,7 @@ class PlayerModel(QtCore.QAbstractTableModel):
                                  ignored,
                                  self.getPlayerStat(p, 'cc'),
                                  self.getPlayerStat(p2, 'cc')])
-        for p in self.controller.awayfromkb.keys():
+        for p in list(self.controller.awayfromkb.keys()):
             ignored = (p in self.controller.ignored) and Qt.Checked or Qt.Unchecked
             self.players.append([PlayerModelState.AFK,
                                  p, self.getPlayerStat(p, 'ping'),

@@ -179,9 +179,9 @@ class EmoticonDialog(QtGui.QDialog):
         flowLayout = FlowLayout(self)
         customEmoticons = Settings.value(Settings.CUSTOM_EMOTICONS)
         if customEmoticons:
-            customEmoticons = filter(None, [line.strip()
+            customEmoticons = [_f for _f in [line.strip()
                                             for line in customEmoticons.split("\n")
-                                            if 0 < len(line) < 64])
+                                            if 0 < len(line) < 64] if _f]
         else:
             customEmoticons = []
         for emoticon in customEmoticons + _emoticons.split("\n"):

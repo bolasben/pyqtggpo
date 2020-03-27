@@ -5,7 +5,7 @@ import logging.handlers
 import os
 import re
 import sys
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 from collections import defaultdict
 from PyQt4 import QtGui, QtCore
 from ggpo.common.runtime import *
@@ -18,7 +18,7 @@ def checkUpdate():
     versionurl = 'https://raw.github.com/poliva/pyqtggpo/master/VERSION'
     #noinspection PyBroadException
     try:
-        response = urllib2.urlopen(versionurl, timeout=2)
+        response = urllib.request.urlopen(versionurl, timeout=2)
         latestVersion = int(response.read().strip())
         return latestVersion - int(copyright.__version__)
     except:
@@ -29,10 +29,10 @@ def defaultdictinit(startdic):
     if not startdic:
         raise KeyError
     d = None
-    for v in startdic.values():
+    for v in list(startdic.values()):
         d = defaultdict(type(v))
         break
-    for k, v in startdic.items():
+    for k, v in list(startdic.items()):
         d[k] = v
     return d
 

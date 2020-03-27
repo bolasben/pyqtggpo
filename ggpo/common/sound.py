@@ -9,9 +9,7 @@ from ggpo.common.runtime import *
 from ggpo.common.settings import Settings
 
 
-class Backend(object):
-    __metaclass__ = abc.ABCMeta
-
+class Backend(object, metaclass=abc.ABCMeta):
     def __init__(self):
         pass
 

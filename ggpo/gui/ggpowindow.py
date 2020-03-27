@@ -7,7 +7,7 @@ import sys
 import re
 import shutil
 import time
-from colortheme import ColorTheme
+from .colortheme import ColorTheme
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import Qt
 import ggpo.common.sound
@@ -335,7 +335,7 @@ class GGPOWindow(QtGui.QMainWindow, Ui_MainWindow):
                 pass
             self.expectFirstChannelResponse = False
 
-            self.channels = dict((c['title'], c['room']) for c in self.controller.channels.values())
+            self.channels = dict((c['title'], c['room']) for c in list(self.controller.channels.values()))
             sortedRooms = sorted(self.channels.keys())
 
             lastChannel = Settings.value(Settings.SELECTED_CHANNEL)
@@ -479,7 +479,7 @@ class GGPOWindow(QtGui.QMainWindow, Ui_MainWindow):
     def onSplitterHotkeyResizeAction(self, part, growth):
         def resizeCallback():
             increment = 5
-            splitterPart, chatHistoryPart, playerViewPart = range(3)
+            splitterPart, chatHistoryPart, playerViewPart = list(range(3))
             sizes = self.uiSplitter.sizes()
             if (growth > 0 and sizes[chatHistoryPart] < increment) or \
                     (growth < 0 and sizes[part] == 0):
@@ -654,7 +654,7 @@ class GGPOWindow(QtGui.QMainWindow, Ui_MainWindow):
                 pass
 
     def setStyleBuiltin(self, styleName):
-        if styleName in QtGui.QStyleFactory.keys():
+        if styleName in list(QtGui.QStyleFactory.keys()):
             ColorTheme.SELECTED = ColorTheme.LIGHT
             QtGui.QApplication.instance().setStyleSheet('')
             QtGui.QApplication.setStyle(QtGui.QStyleFactory.create(styleName))
@@ -678,7 +678,7 @@ class GGPOWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiAwayAct.triggered.connect(self.toggleAFK)
         self.uiEmoticonAct.triggered.connect(self.insertEmoticon)
         self.uiToggleSidebarAction.triggered.connect(self.onToggleSidebarAction)
-        channelPart, chatHistoryPart, playerViewPart = range(3)
+        channelPart, chatHistoryPart, playerViewPart = list(range(3))
         self.uiContractChannelSidebarAct.triggered.connect(self.onSplitterHotkeyResizeAction(channelPart, -1))
         self.uiExpandChannelSidebarAct.triggered.connect(self.onSplitterHotkeyResizeAction(channelPart, +1))
         self.uiContractPlayerListAct.triggered.connect(self.onSplitterHotkeyResizeAction(playerViewPart, -1))
@@ -938,7 +938,7 @@ class GGPOWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.uiDarkThemeAct.toggled.connect(ColorTheme.setDarkTheme)
         self.uiThemeMenu.addAction(self.uiMenuThemeGroup.addAction(self.uiDarkThemeAct))
 
-        for k in QtGui.QStyleFactory.keys():
+        for k in list(QtGui.QStyleFactory.keys()):
             act = QtGui.QAction(actionTitle(k), self)
             act.setCheckable(True)
             act.toggled.connect(self.setStyleCallback(k))

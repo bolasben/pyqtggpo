@@ -4,8 +4,8 @@ from collections import OrderedDict
 
 # noinspection PyClassHasNoInit
 class CLI:
-    ARG_TYPE, HELPSTRING = range(2)
-    NO_ARG, REQUIRED_ARG, OPTIONAL_ARG = range(3)
+    ARG_TYPE, HELPSTRING = list(range(2))
+    NO_ARG, REQUIRED_ARG, OPTIONAL_ARG = list(range(3))
 
     commands = OrderedDict([
         ("/away", [NO_ARG, "away from keyboard"]),
@@ -32,7 +32,7 @@ class CLI:
 
         return "Available commands:\n" + \
                "\n".join(["{}{}  -   {}".format(k, argtext(v), v[cls.HELPSTRING])
-                          for k, v in cls.commands.items()])
+                          for k, v in list(cls.commands.items())])
 
     # need cleaner api for AFK, passing an action is a hack for now
     @classmethod
@@ -78,7 +78,7 @@ class CLI:
                     controller.sendDeclineChallenge(challenger)
 
         def cligeoip():
-            names = controller.available.keys() + controller.awayfromkb.keys() + controller.playing.keys()
+            names = list(controller.available.keys()) + list(controller.awayfromkb.keys()) + list(controller.playing.keys())
             names.sort(key=str.lower)
             for n in names:
                 p = controller.players[n]
@@ -92,7 +92,7 @@ class CLI:
                 if p.city:
                     #city = p.city.decode('utf-8', 'ignore')
                     city = p.city
-                msg = u"{} {} {} {}".format(n, p.ip, country, city)
+                msg = "{} {} {} {}".format(n, p.ip, country, city)
                 controller.sigStatusMessage.emit(msg)
 
         def clihelp():
@@ -114,7 +114,7 @@ class CLI:
                 controller.sigStatusMessage.emit("{} is not in ignore list".format(name))
 
         def cliwatch(name):
-            if name in controller.playing.keys():
+            if name in list(controller.playing.keys()):
                 controller.sendSpectateRequest(name)
             else:
                 controller.sigStatusMessage.emit("{} is not playing".format(name))

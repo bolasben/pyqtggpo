@@ -16,7 +16,7 @@ class CustomEmoticonsDialog(QtGui.QDialog, Ui_EmoticonDialog):
     def onAccepted(self):
         customEmoticons = self.uiEmoticonTextEdit.toPlainText()
         if customEmoticons:
-            saved = "\n".join(filter(None, [line.strip()
+            saved = "\n".join([_f for _f in [line.strip()
                                             for line in customEmoticons.split("\n")
-                                            if 0 < len(line) < 64]))
+                                            if 0 < len(line) < 64] if _f])
             Settings.setValue(Settings.CUSTOM_EMOTICONS, saved)

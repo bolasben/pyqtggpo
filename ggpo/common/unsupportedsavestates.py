@@ -4,8 +4,8 @@ import hashlib
 import json
 import os
 import re
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
 import time
 from PyQt4 import QtCore
 from ggpo.common.util import logdebug, findGamesavesDir, sha256digest
@@ -68,10 +68,10 @@ class SyncWorker(QtCore.QObject):
         try:
             # gotta love CPython's GIL, yield thread
             time.sleep(0.05)
-            response = urllib2.urlopen(self.SAVESTATES_INDEX_URL, timeout=3)
+            response = urllib.request.urlopen(self.SAVESTATES_INDEX_URL, timeout=3)
             games = json.load(response)
 
-            for filename, shahash in games.items():
+            for filename, shahash in list(games.items()):
                 if re.search(r'[^ .a-zA-Z0-9_-]', filename):
                     logdebug().error("Filename {} looks suspicious, ignoring".format(filename))
                     continue
@@ -86,8 +86,8 @@ class SyncWorker(QtCore.QObject):
                 if not self.checkonly:
                     time.sleep(0.05)
                     localfile = os.path.join(d, filename)
-                    fileurl = self.SAVESTATES_GITHUB_BASE_URL + urllib.quote(filename)
-                    urllib.urlretrieve(fileurl, localfile)
+                    fileurl = self.SAVESTATES_GITHUB_BASE_URL + urllib.parse.quote(filename)
+                    urllib.request.urlretrieve(fileurl, localfile)
                     self.sigStatusMessage.emit('Downloaded {}'.format(localfile))
                     # remove config/games/<game>.fs
                     gamefs=os.path.abspath(os.path.join(d,"..","config","games",filename.replace("_ggpo.fs",".fs")))
@@ -105,7 +105,7 @@ class SyncWorker(QtCore.QObject):
                     self.sigStatusMessage.emit(
                         '{} files are current, added {}, updated {}'.format(
                             self.nochange, self.added, self.updated))
-        except Exception, ex:
+        except Exception as ex:
             logdebug().error(str(ex))
         self.sigFinished.emit(self.added, self.updated, self.nochange)
 

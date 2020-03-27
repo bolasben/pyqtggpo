@@ -12,4 +12,5 @@ fi
 
 . ggpo/scripts/shell-functions.sh
 find_python
-${PYTHON} ./main.py 2>/dev/null &
+#${PYTHON} ./main.py 2>/dev/null &
+python3.6 ./main.py 

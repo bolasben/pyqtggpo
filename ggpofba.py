@@ -25,7 +25,7 @@ from subprocess import Popen, PIPE
 import struct
 import random
 import threading
-import Queue
+import queue
 import time
 import traceback
 import logging
@@ -34,7 +34,7 @@ import platform
 def bytes2addr( bytes ):
 	"""Convert a hash to an address pair."""
 	if len(bytes) != 6:
-		raise ValueError, "invalid bytes"
+		raise ValueError("invalid bytes")
 	host = socket.inet_ntoa( bytes[:4] )
 	port, = struct.unpack( "H", bytes[-2:] )
 	return host, port
@@ -51,7 +51,7 @@ def start_fba(args):
 	if not os.path.isfile(os.path.join(dirtest,FBA)):
 		dirtest = os.getcwd()
 	if not os.path.isfile(os.path.join(dirtest,FBA)):
-		print >>sys.stderr, "Can't find", FBA
+		print("Can't find", FBA, file=sys.stderr)
 		logging.info("Can't find %s" % FBA)
 		os._exit(1)
 
@@ -76,7 +76,7 @@ def start_fba(args):
 		logging.debug("RUNNING %s" % args)
 		p = Popen(args)
 	except OSError:
-		print >>sys.stderr, "Can't execute", FBA
+		print("Can't execute", FBA, file=sys.stderr)
 		logging.info("Can't execute %s" % FBA)
 		os._exit(1)
 	return p
@@ -153,7 +153,7 @@ def udp_proxy(args,q):
 	try:
 		sockfd = socket.socket( socket.AF_INET, socket.SOCK_DGRAM )
 		sockfd.settimeout(10)
-	except Exception, e:
+	except Exception as e:
 		logging.info("Error creating udp socket. Using ports.")
 		logging.info("ERROR: %s" % (repr(e)))
 		fba_pid=start_fba(args)
@@ -179,7 +179,7 @@ def udp_proxy(args,q):
 	try:
 		logging.debug("sending data to master")
 		sockfd.sendto( quark+"/"+str(port), master )
-	except Exception, e:
+	except Exception as e:
 		logging.info("Error sending data to fightcade server. Using ports.")
 		logging.info("ERROR: %s" % (repr(e)))
 		fba_pid=start_fba(args)
@@ -202,7 +202,7 @@ def udp_proxy(args,q):
 		return
 
 	if data != "ok "+quark:
-		print >>sys.stderr, "unable to request!"
+		print("unable to request!", file=sys.stderr)
 		logging.info("unable to request!")
 		#os._exit(1)
 	sockfd.sendto( "ok", master )
@@ -289,7 +289,7 @@ def udp_proxy(args,q):
 		if peerdata and " ok" not in peerdata and " _" not in peerdata:
 			logging.debug("sending data to emulator %s = %r" % (emuaddr, peerdata))
 			l_sockfd.sendto( peerdata, emuaddr )
-	except Exception, e:
+	except Exception as e:
 		logging.info("timeout waiting for peer")
 		logging.info("ERROR: %s" % (repr(e)))
 
@@ -313,7 +313,7 @@ def udp_proxy(args,q):
 				peerdata, peeraddr = sockfd.recvfrom(16384)
 				if peerdata:
 					l_sockfd.sendto( peerdata, emuaddr )
-		except Exception, e:
+		except Exception as e:
 			failed+=1
 			logging.info("ERROR: %s" % (repr(e)))
 			if (failed < 4):
@@ -356,7 +356,7 @@ def killGgpoFbaNG():
 
 def registerUriHandler():
 
-	from _winreg import CreateKey, SetValueEx, HKEY_CURRENT_USER, REG_SZ, CloseKey
+	from winreg import CreateKey, SetValueEx, HKEY_CURRENT_USER, REG_SZ, CloseKey
 	regKeys = []
 	regKeys.append(['Software\\Classes\\fightcade', '', 'URL:fightcade Protocol'])
 	regKeys.append(['Software\\Classes\\fightcade', 'URL Protocol', ""])
@@ -404,7 +404,7 @@ def main():
 		registerUriHandler()
 
 	if quark.startswith('quark:served'):
-		q = Queue.Queue()
+		q = queue.Queue()
 		t = threading.Thread(target=process_checker, args=(q,))
 		t.setDaemon(True)
 		t.start()

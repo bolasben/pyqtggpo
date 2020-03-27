@@ -13,7 +13,7 @@ from ggpo.gui.ui.savestatesdialog_ui import Ui_SavestatesDialog
 
 class SavestatesModel(QtCore.QAbstractTableModel):
     N_DISPLAY_COLUMNS = 4
-    NAME, MANUFACTURER, YEAR, DESCRIPTION, FULLPATH = range(5)
+    NAME, MANUFACTURER, YEAR, DESCRIPTION, FULLPATH = list(range(5))
 
     def __init__(self):
         super(SavestatesModel, self).__init__()

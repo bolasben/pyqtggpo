@@ -45,7 +45,7 @@ class Controller(QtCore.QObject):
     sigServerDisconnected = QtCore.pyqtSignal()
     sigStatusMessage = QtCore.pyqtSignal(str)
 
-    (STATE_TCP_READ_LEN, STATE_TCP_READ_DATA) = range(2)
+    (STATE_TCP_READ_LEN, STATE_TCP_READ_DATA) = list(range(2))
 
     def __del__(self):
         # noinspection PyBroadException
@@ -105,7 +105,7 @@ class Controller(QtCore.QObject):
                 self.sigPlayerNewlyJoined.emit(name)
             if name in self.players:
                 p = self.players[name]
-                for k, v in kwargs.items():
+                for k, v in list(kwargs.items()):
                     if v and not (k == 'cc' and isUnknownCountryCode(v)):
                         setattr(p, k, v)
             else:
@@ -164,7 +164,7 @@ class Controller(QtCore.QObject):
                 if os.path.isfile(unsupported):
                     unsupported = sha256digest(unsupported)
                     localJsonDigest = readLocalJsonDigest()
-                    for k, v in localJsonDigest.items():
+                    for k, v in list(localJsonDigest.items()):
                         if v == unsupported:
                             self.unsupportedRom = os.path.splitext(k)[0]
                             break
@@ -459,7 +459,7 @@ class Controller(QtCore.QObject):
         except ValueError:
             msg = msg
         if Settings.value(Settings.USER_LOG_CHAT):
-            loguser().info(u"<{}> {}".format(name, msg))
+            loguser().info("<{}> {}".format(name, msg))
         self.sigChatReceived.emit(name, msg)
 
     # noinspection PyUnusedLocal
@@ -613,7 +613,7 @@ class Controller(QtCore.QObject):
                 if self.username == p2:
                     self.playingagainst = p1
                 if Settings.value(Settings.USER_LOG_PLAYHISTORY) and self.username in [p1, p2]:
-                    loguser().info(u"[IN A GAME] {} vs {}".format(p1, p2))
+                    loguser().info("[IN A GAME] {} vs {}".format(p1, p2))
             elif state == PlayerStates.AVAILABLE:
                 self.parsePlayerAvailableResponse(p1, playerinfo)
                 if self.playingagainst == p1:
@@ -810,7 +810,7 @@ class Controller(QtCore.QObject):
                 devnull = open(os.devnull, 'w')
                 Popen(args, stdout=devnull, stderr=devnull)
                 devnull.close()
-        except OSError, ex:
+        except OSError as ex:
             self.sigStatusMessage.emit("Error executing " + " ".join(args) + "\n" + repr(ex))
 
         # backup FBA settings
@@ -835,7 +835,7 @@ class Controller(QtCore.QObject):
             # http://stackoverflow.com/questions/13414029/catch-interrupted-system-call-in-threading
             try:
                 inputready, outputready, exceptready = select.select(inputs, [], [], self.selectTimeout)
-            except select.error, ex:
+            except select.error as ex:
                 if ex[0] != errno.EINTR and ex[0] != errno.EBADF:
                     raise
             if not inputready:
@@ -971,7 +971,7 @@ class Controller(QtCore.QObject):
 
     def sendPingQueries(self):
         if self.udpConnected:
-            for name in self.available.keys() + self.awayfromkb.keys() + self.playing.keys():
+            for name in list(self.available.keys()) + list(self.awayfromkb.keys()) + list(self.playing.keys()):
                 p = self.players[name]
                 self.sendPingQuery(p)
 
